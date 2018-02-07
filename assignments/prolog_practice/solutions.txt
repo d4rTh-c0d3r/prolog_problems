@@ -1,0 +1,108 @@
+is_prime(2) :- !.
+is_prime(3) :- !.
+is_prime(X) :- X > 3, X mod 2 =\= 0, \+ has_factor(X, 3).
+
+has_factor(X, F) :- X mod F =:= 0, !.
+has_factor(X, F) :- F*F < X, F2 is F+2, has_factor(X, F2).
+
+_____________________________________________________________________________
+
+Q1
+
+to_list(X, [X]) :- X < 10.
+to_list(X, P) :- X >= 10,  R is X mod 10, Y is (X-R)/10, to_list(Y, L), append(L,[R],P).
+
+to_num([X],X).
+to_num([X|L], A) :- to_num(L,B), list_len(L,N), A is X*(10**N) + B.
+
+list_len([],0).
+list_len([_|L], N) :- list_len(L, N1), N is N1 + 1.
+
+rotate_list([X|L], P) :- append(L,[X],P).
+
+compare_list([],[],0).
+compare_list(L1,L2,1) :- list_len(L1,N1), list_len(L2,N2), N1 > N2.
+compare_list(L1,L2,0) :- list_len(L1,N1), list_len(L2,N2), N1 < N2.
+compare_list([X1|_], [X2|_], 1) :- X1 > X2.
+compare_list([X1|_], [X2|_], 0) :- X1 < X2.
+compare_list([_|L1], [_|L2], T) :- compare_list(L1,L2,T).
+
+max_num(N, Ans) :- to_list(N, L), list_len(L, M), mn_help(L, L, M, A), to_num(A,Ans).
+
+mn_help(_, B, 0, B) :- !.
+mn_help(L, B, M, Ans) :- rotate_list(L, LR), compare_list(LR, B, T),M1 is M-1, (T > 0 ->  mn_help(LR,LR,M1,Ans) ; mn_help(LR,B,M1,Ans)).
+
+_____________________________________________________________________________
+
+Q2
+
+is_prime(2) :- !.
+is_prime(3) :- !.
+is_prime(X) :- X > 3, X mod 2 =\= 0, \+ has_factor(X, 3).
+
+has_factor(X, F) :- X mod F =:= 0, !.
+has_factor(X, F) :- F*F < X, F2 is F+2, has_factor(X, F2).
+
+to_list(X, [X]) :- X < 10.
+to_list(X, P) :- X >= 10, R is X mod 10, Y is (X-R)/10, to_list(Y, L), append(L,[R],P).
+
+to_num([X],X).
+to_num([X|L], A) :- to_num(L,B), list_len(L,N), A is X*(10**N) + B.
+
+list_len([],0).
+list_len([_|L], N) :- list_len(L, N1), N is N1 + 1.
+
+rotate_list([X|L], P) :- append(L,[X],P).
+
+prvCir(2,2) :- !.
+prvCir(X,Y) :- X mod 2 =:= 0, X1 is X-1, prvCir(X1,Y).
+prvCir(X,X) :- to_list(X,L), list_len(L,D), cirPrime(L,D).
+prvCir(X,Y) :- X2 is X-2, prvCir(X2,Y).
+
+cirPrime(_,0) :- !.
+cirPrime(L,R) :- to_num(L,N), is_prime(N), rotate_list(L,LR), R1 is R-1, cirPrime(LR,R1).
+
+_____________________________________________________________________________
+
+Q3
+
+sumAbd(N, S) :- N1 is N-1, sumAbdH(N1, S).
+
+isDiv(N,X,1) :- N mod X =:= 0.
+isDiv(N,X,0) :- N mod X =\= 0.
+
+sumOfDiv(N, S) :- N1 is N-1, sumOfDivH(N, S, N1).
+
+sumOfDivH(_, 1, 1) :- !.
+sumOfDivH(N, S, N1) :- N2 is N1-1, sumOfDivH(N, So, N2), isDiv(N, N1, T), S is So + T*N1.
+
+checkAbd(N, T) :- sumOfDiv(N, S), ( S > N -> T is 1 ; T is 0 ).
+
+sumAbdH(2, 0) :- !.
+sumAbdH(N, S) :- checkAbd(N, T), N1 is N-1, sumAbdH(N1, SP), S is SP + T*N.
+
+_____________________________________________________________________________
+
+Q4
+
+subsets(Li, L, A) :- !, length(Li,N), subsetsH(Li, L, N, A).
+
+subsetsH(_, L, N, []) :- N < L.
+subsetsH(_, 0, _, [[]]) :- !.
+subsetsH(_, _, 0, []) :- !.
+subsetsH([H|T], L, N, F) :- !, L1 is L-1, N1 is N-1, subsetsH(T, L, N1, B), subsetsH(T, L1, N1, C), add_all(C, H, A), append(A,B,F).
+
+add_all([], _, []) :- !.
+add_all([H|T], X, [[X|H]|B]) :- !, add_all(T, X, B).
+
+ssetN(N, S, L, Ans) :- subsets(L,N,T), do_sums(T,St), count_num(St,S,Ans).
+
+do_sums([],[]) :- !.
+do_sums([H|T], [S|A]) :- sum_of(H,S), do_sums(T,A).
+
+sum_of([],0) :- !.
+sum_of([H|T], S) :- sum_of(T,St), S is St + H.
+
+count_num([],_,0) :- !.
+count_num([H|T],H,N) :- count_num(T,H,N1), N is N1+1.
+count_num([H|T],X,N) :- X =\= H, count_num(T,X,N).
