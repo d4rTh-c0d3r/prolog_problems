@@ -4,10 +4,10 @@
 % not true: twice(2,[1,3,5]), twice(b,[a,b,c])
 % The query twice(X,[1,2,3,2,1]) should generate the answers X = 1 and X = 2.  
 
-% Solution :
+% Solution (Contains BUG! :- If X is variable and occurs multiple times, it will output it N_C_2 times, i.e. how many possible ways are there to choose the pair):
 
-twice(X, L) :- count(X,L,2), !.
+twice(X, L) :- count(X,L,2).
 
 count(_,_,0) :- !.
 count(X,[X|L],N) :- N1 is N-1, count(X,L,N1).
-count(X,[Y|L],N) :- X =\= Y, count(X,L,N).
+count(X,[_|L],N) :- count(X,L,N).
