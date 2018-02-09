@@ -4,7 +4,7 @@
 % not true: twice(2,[1,3,5]), twice(b,[a,b,c])
 % The query twice(X,[1,2,3,2,1]) should generate the answers X = 1 and X = 2.  
 
-% Solution :
+% Solution (Contains BUG!):
 
 twice(X, L) :- count(X,L,2), !.
 
