@@ -1,5 +1,3 @@
-% Don't put N = length of L!
-
 remove_at(X,[X|L],1,L) :- !.
 remove_at(X,[Y|L],N,[Y|A]) :-
     N1 is N-1,
@@ -13,3 +11,7 @@ rnd_select(L,N,[Y|A]) :-
     random(1,M1,R),
     remove_at(Y,L,R,L1),
     rnd_select(L1,N1,A).
+
+rnd_perm(L,A) :-
+    length(L,N),
+    rnd_select(L,N,A).
